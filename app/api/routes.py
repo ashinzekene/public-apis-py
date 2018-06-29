@@ -1,7 +1,7 @@
 """Sample API routes."""
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
-from app.utils.scrap import scrap
+from app.utils.scrap import scrap, fetch_url_text, scrap_url
 from os import getenv
 
 api_bp = Blueprint('api', __name__)
@@ -17,9 +17,23 @@ def home():
 def journal():
     """Welcome page/message."""
     journal_id = request.args.get('doi', '')
-    api_url = getenv("API_URL") + journal_id
-    url = scrap(api_url, "iframe", False)
-    return jsonify({'url': url})
+    api_url = getenv("JOURNAL_API_URL_SCIHUB") + journal_id
+    url = scrap_url(api_url, "iframe", "src")
+    if url == "Not Found":
+        print("""
+        --------------------------------------
+        Not Found: Using the second crawl site
+        --------------------------------------
+        """)
+        api_url = getenv("JOURNAL_API_URL_LIBGEN") + journal_id
+        url = scrap_url(api_url, ".search-results-list__item-title a", "href")
+        if url == "Not Found":
+            return jsonify({'url': url })
+        else:
+            download_url = "https://sci.libgen.pw/download/sci/" + url.replace("/item/detail/id/", "")
+            return jsonify({'url': download_url })
+    else:
+        return jsonify({'url': url})
 
 
 @api_bp.route('/protected', methods=['GET'])
