@@ -13,9 +13,11 @@ def scrap(html, selector, attr):
     """
     soup = BeautifulSoup(html, "html.parser")
     sel = soup.select(selector)
-    if sel == None or sel[0] == None:
+    try:
+        return sel[0][attr]
+    except IndexError:
         return "Not Found"
-    return sel[0][attr]
+
 
 def scrap_url(url, selector, attr="src"):
     """
@@ -25,6 +27,7 @@ def scrap_url(url, selector, attr="src"):
     soup = BeautifulSoup(r.text, "html.parser")
     print(soup)
     sel = soup.select(selector)
-    if sel == None or sel[0] == None:
+    try:
+        return sel[0][attr]
+    except IndexError:
         return "Not Found"
-    return sel[0][attr]
