@@ -5,6 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -17,6 +18,7 @@ from app.auth.routes import auth_bp
 def create_app(env):
     """Configure and create flask app."""
     app = Flask(__name__)
+    CORS(app)
     app.secret_key = os.getenv('SECRET') or 'a-very-long-string'
     app.config.from_object(app_config[env])
     db.init_app(app)
