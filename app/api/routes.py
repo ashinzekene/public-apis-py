@@ -17,7 +17,7 @@ def home():
 def journal():
     """Welcome page/message."""
     journal_id = request.args.get('doi', '')
-    api_url = getenv("JOURNAL_API_URL_SCIHUB") + journal_id
+    api_url = getenv("JOURNAL_API_URL1") + journal_id
     url = scrap_url(api_url, "iframe", "src")
     if url == "Not Found":
         print("""
@@ -25,12 +25,13 @@ def journal():
         Not Found: Using the second crawl site
         --------------------------------------
         """)
-        api_url = getenv("JOURNAL_API_URL_LIBGEN") + journal_id
+        api_url = getenv("JOURNAL_API_URL2") + journal_id
         url = scrap_url(api_url, ".search-results-list__item-title a", "href")
         if url == "Not Found":
+            print('Not found on the second url')
             return jsonify({'url': url })
         else:
-            download_url = "https://sci.libgen.pw/download/sci/" + url.replace("/item/detail/id/", "")
+            download_url = getenv("JOURNAL_DOWNLOAD_API_URL2") + url.replace("/item/detail/id/", "")
             return jsonify({'url': download_url })
     else:
         return jsonify({'url': url})

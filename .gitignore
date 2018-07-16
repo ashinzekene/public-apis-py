@@ -109,3 +109,4 @@ test.db
 .env
 migrations
 
+env
