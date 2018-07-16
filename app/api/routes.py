@@ -18,23 +18,24 @@ def journal():
     """Welcome page/message."""
     journal_id = request.args.get('doi', '')
     api_url = getenv("JOURNAL_API_URL1") + journal_id
-    url = scrap_url(api_url, "iframe", "src")
-    if url == "Not Found":
+    urls = scrap_url(api_url, "iframe", "src")
+    if urls == "Not Found":
         print("""
         --------------------------------------
         Not Found: Using the second crawl site
         --------------------------------------
         """)
         api_url = getenv("JOURNAL_API_URL2") + journal_id
-        url = scrap_url(api_url, ".search-results-list__item-title a", "href")
-        if url == "Not Found":
+        urls = scrap_url(api_url, ".search-results-list__item-title a", "href")
+        if urls == "Not Found":
             print('Not found on the second url')
-            return jsonify({'url': url })
+            return jsonify({'url': urls })
         else:
-            download_url = getenv("JOURNAL_DOWNLOAD_API_URL2") + url.replace("/item/detail/id/", "")
-            return jsonify({'url': download_url })
+            to_url = lambda x : listgetenv("JOURNAL_DOWNLOAD_API_URL2") + x.replace("/item/detail/id/", "")
+            download_urls = list(map(to_url, urls))
+            return jsonify({'urls': download_urls })
     else:
-        return jsonify({'url': url})
+        return jsonify({'urls': urls})
 
 
 @api_bp.route('/protected', methods=['GET'])

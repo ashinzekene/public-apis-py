@@ -12,9 +12,9 @@ def scrap(html, selector, attr):
     Scrap for text in an html text
     """
     soup = BeautifulSoup(html, "html.parser")
-    sel = soup.select(selector)
+    sels = soup.select(selector)
     try:
-        return sel[0][attr]
+        return sels[0][attr]
     except IndexError:
         return "Not Found"
 
@@ -25,9 +25,13 @@ def scrap_url(url, selector, attr="src"):
     """
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
+    print('soup')
     print(soup)
-    sel = soup.select(selector)
+    sels = soup.select(selector)
     try:
-        return sel[0][attr]
+        urls = list(map(lambda sel: sel[attr], sels))
+        print('urls')
+        print(urls)
+        return urls
     except IndexError:
         return "Not Found"
