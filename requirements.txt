@@ -37,4 +37,4 @@ SQLAlchemy==1.2.7
 Werkzeug==0.14.1
 beautifulsoup4==4.4.0
 requests==2.19.1
-flask_cors=3.0.6
+flask_cors==3.0.6
