@@ -17,24 +17,28 @@ def home():
 def journal():
     """Welcome page/message."""
     journal_id = request.args.get('doi', '')
-    api_url = getenv("JOURNAL_API_URL1") + journal_id
-    urls = scrap_url(api_url, "iframe", "src")
-    if urls == "Not Found":
-        print("""
-        --------------------------------------
-        Not Found: Using the second crawl site
-        --------------------------------------
-        """)
-        api_url = getenv("JOURNAL_API_URL2") + journal_id
-        urls = scrap_url(api_url, ".search-results-list__item-title a", "href")
-        if urls == "Not Found":
-            print('Not found on the second url')
-            return jsonify({'url': urls })
-        else:
-            to_url = lambda x : listgetenv("JOURNAL_DOWNLOAD_API_URL2") + x.replace("/item/detail/id/", "")
-            download_urls = list(map(to_url, urls))
-            return jsonify({'urls': download_urls })
+    api_url = getenv("JOURNAL_API_URL2") + journal_id
+    print(api_url)
+    urls = scrap_url(api_url, ".search-results-list__item-title a", "href")
+    if urls == "Not Found" or len(urls) == 0:
+        return jsonify({'urls': []})
+        # print("""
+        # --------------------------------------
+        #            Not Found
+        # --------------------------------------
+        # """)
+        # api_url = getenv("JOURNAL_API_URL2") + journal_id
+        # urls = scrap_url(api_url, ".search-results-list__item-title a", "href")
+        # if urls == "Not Found":
+        #     print('Not found on the second url')
+        #     return jsonify({'url': urls })
+        # else:
+        # to_url = lambda x : getenv("JOURNAL_DOWNLOAD_API_URL2") + x.replace("/item/detail/id/", "")
+        # download_urls = list(map(to_url, urls))
     else:
+        for x in urls:
+            print(x)
+            x['url'] = getenv("JOURNAL_DOWNLOAD_API_URL2") + x['url'].replace("/item/detail/id/", "")
         return jsonify({'urls': urls})
 
 

@@ -25,12 +25,10 @@ def scrap_url(url, selector, attr="src"):
     """
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
-    print('soup')
-    print(soup)
     sels = soup.select(selector)
+    print(sels)
     try:
-        urls = list(map(lambda sel: sel[attr], sels))
-        print('urls')
+        urls = list(map(lambda sel: {'url': sel[attr], 'title': sel.string }, sels))
         print(urls)
         return urls
     except IndexError:
